@@ -6,3 +6,4 @@ authors = ["Dmitry Guzeev <dmitry.guzeev@yahoo.com>"]
 [dependencies]
 image = "*"
 rand = "*"
+clap = "*"
