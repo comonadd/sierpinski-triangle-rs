@@ -38,7 +38,6 @@ fn generate_sierpinski_tri<'a>(filename: &'a str,
   // Select random starting point
   let mut pnt = (rand_starting_pnt_x_range.ind_sample(&mut rng),
                  rand_starting_pnt_y_range.ind_sample(&mut rng));
-  println!("Starting point: {:?}", pnt);
 
   // Create a new image buffer
   let mut img_buf: ImageBuffer<Rgba<u8>, _> = ImageBuffer::new(img_width, img_height);
