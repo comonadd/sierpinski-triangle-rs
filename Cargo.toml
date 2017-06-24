@@ -1,0 +1,8 @@
+[package]
+name = "sierpinski-triangle"
+version = "0.1.0"
+authors = ["Dmitry Guzeev <dmitry.guzeev@yahoo.com>"]
+
+[dependencies]
+image = "*"
+rand = "*"
