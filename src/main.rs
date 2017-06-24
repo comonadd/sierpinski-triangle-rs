@@ -3,11 +3,13 @@
 
 extern crate image;
 extern crate rand;
+extern crate clap;
 
 use rand::distributions::IndependentSample;
-use std::env;
 use std::fs::File;
 use std::path::Path;
+
+use clap::{Arg, App};
 
 ///
 /// Generate the sierpinski triangle image
@@ -46,7 +48,7 @@ fn generate_sierpinski_tri<'a>(filename: &'a str,
   let pixel = Rgba(clr);
 
   // Generate the image
-  for i in 1..n {
+  for _ in 1..n {
     // Write a pixel
     img_buf.put_pixel(pnt.0, pnt.1, pixel);
 
@@ -69,17 +71,88 @@ fn generate_sierpinski_tri<'a>(filename: &'a str,
 /// Main function
 ///
 fn main() {
-  let args: Vec<_> = env::args().collect();
-  // Get the amount of iterations
-  if args.len() < 2 {
-    println!("[!] Error: you should give the number of iterations");
-  }
-  let n = args[1].parse::<i32>().unwrap();
-  if n <= 0 {
-    println!("[!] Error: you cannot get a Sierpinski Triangle with amount of iterations <= 0");
-    return;
+  let matches = App::new("sierpinski-triangle-rs")
+    .version("1.0")
+    .author("Dmitry Guzeev <dmitry.guzeev@yahoo.com>")
+    .about("Generates Sierpinski Triangle using Chaos Game algorithm")
+    .arg(Arg::with_name("iter-num")
+         .short("n")
+         .long("iter-num")
+         .help("Sets the number of iterations")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("output")
+         .short("o")
+         .long("output")
+         .help("Sets the output file")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("verbose")
+         .short("v")
+         .long("verbose")
+         .help("Sets verbosity"))
+    .arg(Arg::with_name("img-width")
+         .short("w")
+         .long("img-width")
+         .help("Sets the width of the output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("img-height")
+         .short("h")
+         .long("img-height")
+         .help("Sets the height of the output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("red")
+         .short("r")
+         .long("img-red")
+         .help("Sets the red amount in the color of output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("green")
+         .short("g")
+         .long("img-green")
+         .help("Sets the green amount in the color of output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("blue")
+         .short("b")
+         .long("img-blue")
+         .help("Sets the blue amount in the color of output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .arg(Arg::with_name("alpha")
+         .short("a")
+         .long("img-alpha")
+         .help("Sets the alpha amount in the color of the output image")
+         .value_name("FILE")
+         .takes_value(true))
+    .get_matches();
+
+  // Retrieve the command-line arguments
+  let verbose = matches.is_present("verbose");
+  let iter_num = matches.value_of("iter-num").unwrap_or("1000000").parse::<u32>().unwrap();
+  let output_file = matches.value_of("output").unwrap_or("triangle.png");
+  let img_width = matches.value_of("img-width").unwrap_or("1024").parse::<u32>().unwrap();
+  let img_height = matches.value_of("img-height").unwrap_or("1024").parse::<u32>().unwrap();
+  let red = matches.value_of("red").unwrap_or("255").parse::<u8>().unwrap();
+  let green = matches.value_of("green").unwrap_or("0").parse::<u8>().unwrap();
+  let blue = matches.value_of("blue").unwrap_or("0").parse::<u8>().unwrap();
+  let alpha = matches.value_of("alpha").unwrap_or("255").parse::<u8>().unwrap();
+
+  // Print verbose information
+  if verbose {
+    println!("Number of iterations: {}", iter_num);
+    println!("Output file path: {}", output_file);
+    println!("Image dimensions: {}X{}", img_width, img_height);
+    println!("Image color: [R:{}, G:{}, B:{}, A:{}]", red, green, blue, alpha);
   }
 
   // Generate the actual triangle
-  generate_sierpinski_tri("triangle.png", 1024, 1024, n as u32, [255, 0, 0, 255]);
+  generate_sierpinski_tri(
+    output_file,
+    img_width,
+    img_height,
+    iter_num,
+    [red, green, blue, alpha]);
 }
